@@ -1,35 +1,41 @@
 # 01 - Installing the Domain Controller
 
-
+## PS Remoting
 ````
 # On Server
 Enable-PSRemoting
+
+
+# On Client
+
+Start-Service winrm
 
 # Not necessary when client is part of domain
 get-item wsman:\localhost\Client\TrustedHosts
 set-item wsman:\localhost\Client\TrustedHosts -value {ip}
 
-# On Client
 New-PSSession -ComputerName {ip} -Credential (Get-Credential)
 Enter-PSSession {id}
 ````
----
+
+## Domain Controller things
+
 
 1. Sconfig
-    - change the hostname
+
+- change the hostname
+````
+````
+
+- assign static IP
 ````
 
 ````
-
-    - assign static IP
+- change DNS server to own IP (of DC)
 ````
-
+Get-NetIPAddress -IPAddress {ip}
+Set-DnsClientServerAddress -InterfaceIndex {index} -ServerAddresses {ip}
 ````
-    - change DNS server to own IP (of DC)
-    ````
-    Get-NetIPAddress -IPAddress {ip}
-    Set-DnsClientServerAddress -InterfaceIndex {index} -ServerAddresses {ip}
-    ````
 
 2. Install ADDS
 
@@ -39,7 +45,7 @@ Import-Module ADDSDeployment
 Install-ADDSForest
 ````
 
-3. Join domain - client
+## Join domain - client
 ````
 Add-Computer -DomainName {domainname} -Credential (Get-Credential) -Force -Restart
 ````
